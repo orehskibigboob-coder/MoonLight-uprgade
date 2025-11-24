@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 env:
-  JAVA_VERSION: 17
+  JAVA_VERSION: 8
   GRADLE_TASK: shadowJar
   JAR_NAME: Moonlight.jar
   JSON_NAME: Moonlight.json

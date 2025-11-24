@@ -23,7 +23,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set Up Java
+      - name: Set up Java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
@@ -37,19 +37,18 @@ jobs:
             ~/.gradle/caches
             ~/.gradle/wrapper/
           key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            gradle-${{ runner.os }}-
+          restore-keys: gradle-${{ runner.os }}-
 
-      - name: Grant Execute Permission for gradlew
+      - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
       - name: Build Project with Gradle
         run: ./gradlew ${{ env.GRADLE_TASK }} --no-daemon
 
-      - name: Rename and Move Files to Root
+      - name: Rename and Move Files
         run: |
-          mv ${BUILD_DIR}/Moonlight-1.8.9-all.jar ${GITHUB_WORKSPACE}/${JAR_NAME}
-          mv ${JSON_DIR}/MoonLight.json ${GITHUB_WORKSPACE}/${JSON_NAME}
+          mv ${BUILD_DIR}/Moonlight-1.8.9-all.jar ${JAR_NAME}
+          mv ${JSON_DIR}/MoonLight.json ${JSON_NAME}
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
@@ -59,13 +58,14 @@ jobs:
             ${{ env.JAR_NAME }}
             ${{ env.JSON_NAME }}
 
-      - name: Create Release
-        uses: "0xDylan/action-auto-releases-n20@v1.1"
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
         with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "latest"
+          tag_name: latest
+          name: Latest Build
           prerelease: true
-          title: "Latest Build"
           files: |
             ${{ env.JAR_NAME }}
             ${{ env.JSON_NAME }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
